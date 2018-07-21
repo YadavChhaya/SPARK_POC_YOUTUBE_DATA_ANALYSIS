@@ -1,0 +1,88 @@
+Spark POC – Youtube Data Analysis
+======================================
+
+Data Set Description
+--------------------
+Column 1: Video id of 11 characters.
+
+Column 2: Uploader of the video.
+
+Column 3: Interval between day of establishment of YouTube and the date of uploading of the video.
+
+Column 4: Category of the video.
+
+Column 5: Length of the video.
+
+Column 6: Number of views for the video.
+
+Column 7: Rating on the video.
+
+Column 8: Number of ratings given for the video
+
+Column 9: Number of comments on the videos.
+
+Column 10: Related video ids with the uploaded video.
+
+Input Dataset:
+---------------
+
+https://drive.google.com/file/d/0ByJLBTmJojjzR2x0MzVpc2Z6enM/view
+
+Problem Statement 1:
+--------------------
+Here, we will find out what are the top five categories with maximum number of videos uploaded.
+
+val rdd1 = sc.textFile("/home/acadgild/Downloads/youtubedata.txt")
+val rdd2 = rdd1.filter(x => x.toString().split("\t").length >= 3) 
+val rdd3 = rdd2.map(x => x.toString())
+val rdd4 = rdd3.map{x => x.split("\t")}
+val rdd5 = rdd4.map{x => (x(3),1)}
+val rdd6 = rdd5.reduceByKey(_+_)
+val rdd7 = rdd6.map(x => x.swap )
+val rdd8 = rdd7.sortByKey(false)
+val rdd9 = rdd8.top(5)
+rdd9.foreach(println)
+
+Output:
+-------
+(908,Entertainment)
+(862,Music)
+(414,Comedy)
+(398,People & Blogs)
+(333,News & Politics)
+
+
+
+
+===================================================
+
+Problem Statement 2:
+---------------------
+Find the top 10 rated videos in YouTube.
+
+val rdd1 = sc.textFile("/home/acadgild/Downloads/youtubedata.txt")
+val rdd2 = rdd1.filter(x => x.toString().split("\t").length >= 6) 
+val rdd3 = rdd2.map(x => x.toString())
+val rdd4 = rdd3.map{x => x.split("\t")}
+val rdd5 = rdd4.map{x => (x(0),x(6).toDouble)}
+val rdd6 = rdd5.reduceByKey(_+_)
+val rdd7 = rdd6.map(x => x.swap )
+val rdd8 = rdd7.sortByKey(false)
+val rdd9 = rdd8.top(10)
+rdd9.foreach(println)
+
+Output:
+-------
+(5.0,zwhAcU0_hQM)
+(5.0,zufaHASxuAw)
+(5.0,ztXK9SoFeCc)
+(5.0,zokUPp_nj_c)
+(5.0,znPxqsd-51I)
+(5.0,zk6tMmEM-xs)
+(5.0,zc9jIxubJ6I)
+(5.0,za_hfryoLi4)
+(5.0,zVvlM1eY7vM)
+(5.0,zUAGGchTZ98)
+
+====================================================
+
